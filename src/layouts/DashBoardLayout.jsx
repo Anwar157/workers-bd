@@ -67,6 +67,13 @@ const DashBoardLayout = () => {
               <HiBriefcase /> Post Job
             </Link>
           </li>
+          <li>
+            <Link
+              to="/dashboard/job-post"
+              className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-700">
+              <HiBriefcase /> Available Job
+            </Link>
+          </li>
 
           <li>
             <Link
