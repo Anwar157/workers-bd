@@ -10,6 +10,8 @@ import SelectRoll from "../pages/dashboard/SelectRoll";
 import WorkerDashBoard from "../pages/dashboard/WorkerDashBoard";
 import ClientDashBoard from "../pages/dashboard/ClientDashBoard";
 import JobPost from "../jobpost/JobPost";
+import ShowWorkers from "../workerData/ShowWorkers";
+import AvailableJob from "../jobpost/AvailableJob";
 
 // 🔹 Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -70,6 +72,14 @@ export const router = createBrowserRouter([
       {
         path: "job-post",
         element: <JobPost />,
+      },
+      {
+        path: "available-job",
+        element: <AvailableJob />,
+      },
+      {
+        path: "show-worker",
+        element: <ShowWorkers />,
       },
       {
         path: "workerDash",

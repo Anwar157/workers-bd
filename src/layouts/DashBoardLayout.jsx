@@ -69,7 +69,7 @@ const DashBoardLayout = () => {
           </li>
           <li>
             <Link
-              to="/dashboard/job-post"
+              to="/dashboard/available-job"
               className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-700">
               <HiBriefcase /> Available Job
             </Link>
@@ -77,7 +77,7 @@ const DashBoardLayout = () => {
 
           <li>
             <Link
-              to="/dashboard/workers"
+              to="/dashboard/show-worker"
               className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-700">
               <FaUsers /> Workers
             </Link>
