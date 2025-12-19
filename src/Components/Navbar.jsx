@@ -1,56 +1,115 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
+import Swal from "sweetalert2";
+import { HiUserCircle } from "react-icons/hi";
 
 const Navbar = () => {
-  const links = (
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await logout();
+    Swal.fire({
+      title: "Logged out!",
+      icon: "success",
+      toast: true,
+      timer: 2000,
+      position: "top-end",
+    });
+    navigate("/");
+  };
+
+  const navLinks = (
     <>
       <li>
-        <a>Workers</a>
+        <Link to="/dashboard">DashBoard</Link>
       </li>
       <li>
-        <a>Services</a>
+        <Link to="/workers">Workers</Link>
+      </li>
+      <li>
+        <Link to="/services">Services</Link>
       </li>
     </>
   );
+
   return (
-    <div>
-      <div className="navbar bg-blue-950 shadow-sm">
-        <div className="navbar-start">
-          <div className="dropdown">
+    <div className="navbar bg-blue-950 px-4">
+      {/* Left */}
+      <div className="navbar-start">
+        <div className="dropdown lg:hidden">
+          <label tabIndex={0} className="btn btn-ghost text-white">
+            ☰
+          </label>
+          <ul
+            tabIndex={0}
+            className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+            {navLinks}
+          </ul>
+        </div>
+
+        <Link to="/" className="font-bold text-2xl md:text-3xl text-white">
+          Wor<span className="text-emerald-400">kers</span>
+        </Link>
+      </div>
+
+      {/* Center */}
+      <div className="navbar-center hidden lg:flex">
+        <ul className="menu menu-horizontal text-white gap-2">{navLinks}</ul>
+      </div>
+
+      {/* Right */}
+      <div className="navbar-end gap-3">
+        {currentUser ? (
+          <div className="dropdown dropdown-end">
             <div
               tabIndex={0}
-              role="button"
-              className="btn btn-ghost lg:hidden text-white">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                {" "}
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />{" "}
-              </svg>
+              className="btn btn-ghost btn-circle "
+              onClick={() => setOpen(!open)}>
+              {currentUser.photoURL ? (
+                <img
+                  src={currentUser.photoURL}
+                  alt="profile"
+                  className="w-10 rounded-full"
+                />
+              ) : (
+                <HiUserCircle className="text-4xl text-white" />
+              )}
             </div>
-            <ul
-              tabIndex="-1"
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow ">
-              {links}
-            </ul>
+
+            {open && (
+              <ul
+                tabIndex={0}
+                className="menu dropdown-content mt-3 p-4 shadow bg-base-100 rounded-box w-56">
+                <li className="font-bold text-center">
+                  {currentUser.displayName}
+                </li>
+                <li>
+                  <Link to="/profile">My Profile</Link>
+                </li>
+                <li>
+                  <Link to="/dashboard">Dashboard</Link>
+                </li>
+                <li>
+                  <button onClick={handleLogout} className="text-red-600">
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            )}
           </div>
-          <h2 className="font-bold text-2xl md:text-3xl lg:text-4xl text-white">
-            Wor<span>kers</span>
-          </h2>
-        </div>
-        <div className="navbar-center hidden lg:flex text-white">
-          <ul className="menu menu-horizontal px-1">{links}</ul>
-        </div>
-        <div className="navbar-end">
-          <a className="btn">Button</a>
-        </div>
+        ) : (
+          <>
+            <Link to="/login" className="btn btn-outline text-white">
+              Login
+            </Link>
+            <Link to="/register" className="btn btn-success">
+              Register
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

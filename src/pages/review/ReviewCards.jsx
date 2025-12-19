@@ -19,7 +19,7 @@ const ReviewCards = () => {
         effect="coverflow"
         grabCursor={true}
         centeredSlides={true}
-        slidesPerView={3}
+        slidesPerView={1}
         spaceBetween={30}
         coverflowEffect={{
           rotate: 50,
