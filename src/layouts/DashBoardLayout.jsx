@@ -92,16 +92,18 @@ const DashBoardLayout = () => {
           </li>
         </ul>
 
-        {/* Admin Panel */}
-        <div className="mt-8 border-t border-blue-800 px-4 pt-4">
-          <p className="text-sm text-gray-300 mb-2">Admin Panel</p>
+        {/* 🔐 Admin Panel (Only Admin Can See) */}
+        {currentUser?.role === "admin" && (
+          <div className="mt-8 border-t border-blue-800 px-4 pt-4">
+            <p className="text-sm text-gray-300 mb-2">Admin Panel</p>
 
-          <Link
-            to="/dashboard/admin"
-            className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-700">
-            <FaUserShield /> Admin Dashboard
-          </Link>
-        </div>
+            <Link
+              to="/dashboard/admin"
+              className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-700">
+              <FaUserShield /> Admin Dashboard
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* ================= Overlay (mobile) ================= */}

@@ -12,6 +12,8 @@ import ClientDashBoard from "../pages/dashboard/ClientDashBoard";
 import JobPost from "../jobpost/JobPost";
 import ShowWorkers from "../workerData/ShowWorkers";
 import AvailableJob from "../jobpost/AvailableJob";
+import Services from "../pages/service/Services";
+import Admin from "../pages/admin/Admin";
 
 // 🔹 Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -80,6 +82,14 @@ export const router = createBrowserRouter([
       {
         path: "show-worker",
         element: <ShowWorkers />,
+      },
+      {
+        path: "services",
+        element: <Services />,
+      },
+      {
+        path: "admin",
+        element: <Admin />,
       },
       {
         path: "workerDash",
