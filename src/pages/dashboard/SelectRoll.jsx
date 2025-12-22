@@ -35,7 +35,7 @@ const SelectRoll = () => {
     try {
       // STEP 2: SEND PATCH REQUEST WITH AUTH HEADER
       await axios.patch(
-        `http://localhost:3000/users/profile/${currentUser.uid}`,
+        `https://workers-details-server.vercel.app/users/profile/${currentUser.uid}`,
         { role, profileCompleted: true },
         { headers: { Authorization: `Bearer ${token}` } }
       );

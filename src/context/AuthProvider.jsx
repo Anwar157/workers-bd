@@ -28,16 +28,8 @@ const AuthProvider = ({ children }) => {
     await updateProfile(user, { displayName: name, photoURL });
     const user = userCredential.user;
 
-    // save to mongodb
-    await axios.post("http://localhost:3000/users", {
-      uid: user.uid,
-      name,
-      email,
-      photoURL,
-    });
-
     // Save user in MongoDB
-    await axios.post("http://localhost:3000/users", {
+    await axios.post("https://workers-details-server.vercel.app/users", {
       uid: user.uid,
       name,
       email,
@@ -46,9 +38,12 @@ const AuthProvider = ({ children }) => {
 
     // GET JWT FROM BACKEND
     try {
-      const res = await axios.post("http://localhost:3000/jwt", {
-        uid: user.uid,
-      });
+      const res = await axios.post(
+        "https://workers-details-server.vercel.app/jwt",
+        {
+          uid: user.uid,
+        }
+      );
       localStorage.setItem("access-token", res.data.token);
     } catch (err) {
       console.error("JWT fetch failed", err);
@@ -72,9 +67,12 @@ const AuthProvider = ({ children }) => {
 
     // Get JWT after login
     try {
-      const res = await axios.post("http://localhost:3000/jwt", {
-        uid: user.uid,
-      });
+      const res = await axios.post(
+        "https://workers-details-server.vercel.app/jwt",
+        {
+          uid: user.uid,
+        }
+      );
       localStorage.setItem("access-token", res.data.token);
     } catch (err) {
       console.error("JWT fetch failed", err);
@@ -104,7 +102,7 @@ const AuthProvider = ({ children }) => {
 
     // Update in MongoDB
     await axios.patch(
-      `http://localhost:3000/users/${auth.currentUser.uid}`,
+      `https://workers-details-server.vercel.app/users/${auth.currentUser.uid}`,
       { name, photoURL },
       { headers: { Authorization: `Bearer ${token}` } } // send token
     );
@@ -123,9 +121,12 @@ const AuthProvider = ({ children }) => {
         const token = localStorage.getItem("access-token");
         if (!token) {
           try {
-            const res = await axios.post("http://localhost:3000/jwt", {
-              uid: user.uid,
-            });
+            const res = await axios.post(
+              "https://workers-details-server.vercel.app/jwt",
+              {
+                uid: user.uid,
+              }
+            );
             localStorage.setItem("access-token", res.data.token);
           } catch (err) {
             console.error("JWT fetch failed", err);

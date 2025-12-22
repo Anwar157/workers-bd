@@ -57,7 +57,7 @@ const WorkerDashBoard = () => {
 
     try {
       await axios.patch(
-        `http://localhost:3000/users/profile/${currentUser.uid}`,
+        `https://workers-details-server.vercel.app//users/profile/${currentUser.uid}`,
         payload,
         {
           headers: {

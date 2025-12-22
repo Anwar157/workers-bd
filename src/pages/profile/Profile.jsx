@@ -47,7 +47,7 @@ const Profile = () => {
         const token = localStorage.getItem("access-token"); //  token source
 
         const res = await axios.get(
-          `http://localhost:3000/users/${currentUser.uid}`,
+          `https://workers-details-server.vercel.app/users/${currentUser.uid}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -144,7 +144,7 @@ const Profile = () => {
 
       // FIX 4: explicit payload (no email / no photoFile)
       await axios.patch(
-        `http://localhost:3000/users/${currentUser.uid}`,
+        `https://workers-details-server.vercel.app/users/${currentUser.uid}`,
         {
           name: userData.name,
           phone: userData.phone,

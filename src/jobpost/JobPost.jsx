@@ -30,7 +30,10 @@ const JobPost = () => {
     };
 
     try {
-      await axios.post("http://localhost:3000/jobs", jobData);
+      await axios.post(
+        "https://workers-details-server.vercel.app/jobs",
+        jobData
+      );
 
       Swal.fire({
         icon: "success",
