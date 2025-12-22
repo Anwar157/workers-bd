@@ -17,31 +17,63 @@ const SelectRoll = () => {
     e.preventDefault();
     if (!role) return;
 
-    await axios.patch(`http://localhost:3000/users/role/${currentUser.uid}`, {
-      role,
-      profileCompleted: true,
-    });
+    //  STEP 1: GET JWT TOKEN FROM localStorage
+    const token = localStorage.getItem("access-token");
+    if (!token) {
+      Swal.fire({
+        icon: "error",
+        title: "Unauthorized",
+        text: "Access token not found. Please login again.",
+        toast: true,
+        position: "top-end",
+        timer: 2500,
+        showConfirmButton: false,
+      });
+      return;
+    }
 
-    setCurrentUser({
-      ...currentUser,
-      role,
-      profileCompleted: true,
-    });
+    try {
+      // STEP 2: SEND PATCH REQUEST WITH AUTH HEADER
+      await axios.patch(
+        `http://localhost:3000/users/profile/${currentUser.uid}`,
+        { role, profileCompleted: true },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    Swal.fire({
-      icon: "success",
-      title: "Role selected",
-      toast: true,
-      position: "top-end",
-      timer: 2000,
-      showConfirmButton: false,
-    });
+      // STEP 3: UPDATE LOCAL STATE
+      setCurrentUser({
+        ...currentUser,
+        role,
+        profileCompleted: true,
+      });
 
-    // SIMPLE REDIRECT
-    if (role === "worker" || role === "both") {
-      navigate("/dashboard/workerDash");
-    } else {
-      navigate("/dashboard/client");
+      // STEP 4: SHOW SUCCESS ALERT
+      Swal.fire({
+        icon: "success",
+        title: "Role selected",
+        toast: true,
+        position: "top-end",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      // STEP 5: REDIRECT BASED ON ROLE
+      if (role === "worker" || role === "both") {
+        navigate("/dashboard/workerDash");
+      } else {
+        navigate("/dashboard/client");
+      }
+    } catch (error) {
+      console.error("Role update failed:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Update failed",
+        text: error.response?.data?.message || "Something went wrong",
+        toast: true,
+        position: "top-end",
+        timer: 2500,
+        showConfirmButton: false,
+      });
     }
   };
   return (

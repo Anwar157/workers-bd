@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
+import avatar from "../../assets/avater.jpeg";
 
 const image_host = import.meta.env.VITE_image_host;
 
@@ -41,42 +42,62 @@ const Profile = () => {
   useEffect(() => {
     if (!currentUser) return;
 
-    axios
-      .get(`http://localhost:3000/users/${currentUser.uid}`)
-      .then((res) => {
-        if (res.data) {
-          const {
-            name,
-            email,
-            phone,
-            dateOfBirth,
-            division,
-            district,
-            thana,
-            village,
-            postCode,
-            photoURL,
-          } = res.data;
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("access-token"); //  token source
 
-          setUserData({
-            name: name || "",
-            email: email || "",
-            phone: phone || "",
-            dateOfBirth: dateOfBirth || "",
-            division: division || "",
-            district: district || "",
-            thana: thana || "",
-            village: village || "",
-            postCode: postCode || "",
-            photoURL: photoURL || "",
-            photoFile: null,
-          });
+        const res = await axios.get(
+          `http://localhost:3000/users/${currentUser.uid}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-          setPreviewImage(photoURL || "");
-        }
+        const {
+          name,
+          email,
+          phone,
+          dateOfBirth,
+          division,
+          district,
+          thana,
+          village,
+          postCode,
+          photoURL,
+        } = res.data || {};
+
+        setUserData({
+          name: name || "",
+          email: email || "",
+          phone: phone || "",
+          dateOfBirth: dateOfBirth || "",
+          division: division || "",
+          district: district || "",
+          thana: thana || "",
+          village: village || "",
+          postCode: postCode || "",
+          photoURL: photoURL || "",
+          photoFile: null,
+        });
+
+        setPreviewImage(photoURL || "");
+      } catch (err) {
+        console.error("Fetch user failed:", err);
+        Swal.fire({
+          title: "Failed to load profile",
+          icon: "error",
+          toast: true,
+          position: "top-end",
+          timer: 2000,
+        });
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    };
+
+    fetchUser();
   }, [currentUser]);
 
   // Handle input change
@@ -115,18 +136,32 @@ const Profile = () => {
       // Firebase update
       await updateUserProfile(userData.name, imageURL);
 
+      const token = localStorage.getItem("access-token");
+
+      if (!token) {
+        throw new Error("No access token found");
+      }
+
       // FIX 4: explicit payload (no email / no photoFile)
-      await axios.patch(`http://localhost:3000/users/${currentUser.uid}`, {
-        name: userData.name,
-        phone: userData.phone,
-        dateOfBirth: userData.dateOfBirth,
-        division: userData.division,
-        district: userData.district,
-        thana: userData.thana,
-        village: userData.village,
-        postCode: userData.postCode,
-        photoURL: imageURL,
-      });
+      await axios.patch(
+        `http://localhost:3000/users/${currentUser.uid}`,
+        {
+          name: userData.name,
+          phone: userData.phone,
+          dateOfBirth: userData.dateOfBirth,
+          division: userData.division,
+          district: userData.district,
+          thana: userData.thana,
+          village: userData.village,
+          postCode: userData.postCode,
+          photoURL: imageURL,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       Swal.fire({
         title: "Profile Updated!",
@@ -160,7 +195,8 @@ const Profile = () => {
         {/* Profile Photo */}
         <div className="flex flex-col items-center gap-2">
           <img
-            src={previewImage || "https://via.placeholder.com/150"}
+            src={previewImage || userData.photoURL || avatar}
+            onError={(e) => (e.target.src = avatar)}
             alt="Profile"
             className="w-24 h-24 rounded-full object-cover border"
           />

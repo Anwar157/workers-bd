@@ -16,6 +16,33 @@ const WorkerDashBoard = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    if (!currentUser) {
+      Swal.fire({
+        icon: "error",
+        title: "প্রোফাইল সংরক্ষণ ব্যর্থ",
+        text: "ব্যবহারকারীর তথ্য পাওয়া যায়নি। অনুগ্রহ করে লগইন করুন।",
+        toast: true,
+        position: "top-end",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      return;
+    }
+
+    const token = localStorage.getItem("access-token");
+    if (!token) {
+      Swal.fire({
+        icon: "error",
+        title: "Unauthorized",
+        text: "Access token not found. Please login again.",
+        toast: true,
+        position: "top-end",
+        timer: 2500,
+        showConfirmButton: false,
+      });
+      return;
+    }
+
     const payload = {
       category: data.category,
       skills: data.skills.split(",").map((s) => s.trim()),
@@ -31,7 +58,12 @@ const WorkerDashBoard = () => {
     try {
       await axios.patch(
         `http://localhost:3000/users/profile/${currentUser.uid}`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Token পাঠাচ্ছি
+          },
+        }
       );
 
       Swal.fire({
@@ -42,10 +74,9 @@ const WorkerDashBoard = () => {
         timer: 2000,
         showConfirmButton: false,
       });
-      // ✅ Navigate based on role
-      navigate("/");
 
       reset();
+      navigate("/"); // অথবা কোনো worker dashboard
     } catch (error) {
       console.error(error);
       Swal.fire({
